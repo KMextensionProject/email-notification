@@ -4,6 +4,7 @@ import static io.github.kmextensionproject.notification.base.NotificationResult.
 import static io.github.kmextensionproject.notification.base.NotificationResult.success;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
+import static java.util.Objects.requireNonNull;
 import static java.util.logging.Logger.getLogger;
 
 import java.util.Properties;
@@ -81,6 +82,9 @@ public class EmailNotification implements Notification {
 	 */
 	@Override
 	public NotificationResult sendNotification(Message message, Recipient recipient) {
+		requireNonNull(message, "message cannot be null");
+		requireNonNull(recipient, "recipient cannot be null");
+
 		if (!sendingEnabled) {
 			return failure("Can not send an email - missing proper configuration, check logs for missing variables");
 		} else if (isBlank(message.getSubject()) || isBlank(recipient.getEmail())) {
