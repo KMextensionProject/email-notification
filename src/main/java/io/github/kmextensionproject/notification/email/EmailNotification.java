@@ -46,7 +46,7 @@ public class EmailNotification implements Notification {
 	private String senderPassword;
 
 	// based on proper configuration
-	private boolean sendingEnabled;
+	private boolean sendingEnabled = true;
 
 	public EmailNotification() {
 		smtpProperties = initSystemProperties();

@@ -4,7 +4,7 @@
 
 	<groupId>io.github.kmextensionproject.notification</groupId>
 	<artifactId>email-notification</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.1</version>
 	<packaging>jar</packaging>
 
 	<name>email-notification</name>
@@ -136,8 +136,8 @@
 												<active>ALWAYS</active>
 												<url>https://s01.oss.sonatype.org/service/local</url>
 												;
-												<closeRepository>true</closeRepository> <!-- change these to true after first successful publish -->
-												<releaseRepository>true</releaseRepository>
+												<closeRepository>false</closeRepository> <!-- change these to true after first successful publish -->
+												<releaseRepository>false</releaseRepository>
 												<stagingRepositories>target/staging-deploy</stagingRepositories>
 											</maven-central>
 										</nexus2>
