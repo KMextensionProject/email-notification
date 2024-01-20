@@ -4,7 +4,7 @@
 
 	<groupId>io.github.kmextensionproject.notification</groupId>
 	<artifactId>email-notification</artifactId>
-	<version>1.1</version>
+	<version>1.2</version>
 	<packaging>jar</packaging>
 
 	<name>email-notification</name>
