@@ -6,8 +6,12 @@ import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 import static java.util.logging.Logger.getLogger;
+import static java.util.stream.Collectors.toList;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -15,6 +19,7 @@ import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
@@ -87,13 +92,13 @@ public class EmailNotification implements Notification {
 
 		if (!sendingEnabled) {
 			return failure("Can not send an email - missing proper configuration, check logs for missing variables");
-		} else if (isBlank(message.getSubject()) || isBlank(recipient.getEmail())) {
+		} else if (isBlank(message.getSubject()) || recipient.getEmail().isEmpty()) {
 			return failure("Can not send an email - message subject or recipient's email address is missing");
 		}
 		try {
 			MimeMessage mimeMsg = new MimeMessage(createSession());
 			mimeMsg.setFrom(new InternetAddress(senderAddress));
-			mimeMsg.addRecipient(javax.mail.Message.RecipientType.TO, new InternetAddress(recipient.getEmail()));
+			mimeMsg.addRecipients(javax.mail.Message.RecipientType.TO, parseAddresses(recipient.getEmail()));
 			mimeMsg.setSubject(message.getSubject());
 			mimeMsg.setText(withHtmlLineBreaks(message.getBody()), "UTF-8", "html");
 
@@ -114,6 +119,23 @@ public class EmailNotification implements Notification {
                 return new PasswordAuthentication(senderAddress, senderPassword);
             }
         });
+	}
+
+	private InternetAddress[] parseAddresses(List<String> emails) {
+		return emails.stream()
+			.map(this::initAddress)
+			.filter(Objects::nonNull)
+			.collect(toList())
+			.toArray(new InternetAddress[0]);
+	}
+
+	private InternetAddress initAddress(String emailAddress) {
+		try {
+			return new InternetAddress(emailAddress);
+		} catch (AddressException ae) {
+			LOG.log(Level.WARNING, "Cannot create email address for " + emailAddress, ae);
+			return null;
+		}
 	}
 
 	private String withHtmlLineBreaks(String message) {
